@@ -9,6 +9,7 @@ import axios from 'axios'
 import Button from './components/Button'
 import Stats from './components/Stats'
 import ChartBar from './components/ChartBar'
+import Loader from './components/Loader'
 
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [month, setMonth] = useState(3);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [barchartLoading, setBarchartLoading] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(false);
 
   const months = [
     { name: "January", value: 1 },
@@ -38,6 +42,7 @@ function App() {
 
   const fetchData = async() => {
     try{
+      setTableLoading(true);
       if(searchQuery!=""){
         const res = await axios.get(`http://localhost:8000/api/v1/transactions?page=${1}&&searchText=${searchQuery}&&month=${month}`);
         setData(res.data);
@@ -46,6 +51,7 @@ function App() {
         const res = await axios.get(`http://localhost:8000/api/v1/transactions?page=${page}&&searchText=${searchQuery}&&month=${month}`);
         setData(res.data);
       }
+      setTableLoading(false);
       
     }catch(err){
       console.log(err);
@@ -55,8 +61,12 @@ function App() {
   const fetchStats = async() => {
     try{
 
+      setStatsLoading(true);
+
       const res = await axios.get(`http://localhost:8000/api/v1/stistics?month=${month}`);
       setStatsData(res.data);
+
+      setStatsLoading(false);
 
     }catch(err){
       console.log(err);
@@ -66,8 +76,10 @@ function App() {
   const fetchBarStats = async() => {
     try{
 
+      setBarchartLoading(true);
       const res = await axios.get(`http://localhost:8000/api/v1/barchart?month=${month}`);
       setBarchartData(res.data);
+      setBarchartLoading(false);
 
     }catch(err){
       console.log(err);
@@ -92,9 +104,15 @@ function App() {
 
     useEffect(() => {
       fetchData();
-      fetchStats();
-      fetchBarStats();
     }, [page, searchQuery, month]);
+
+    useEffect(() => {
+      fetchStats();
+    }, [month]);
+
+    useEffect(() => {
+      fetchBarStats();
+    }, [month]);
 
   return (
     <>
@@ -108,7 +126,10 @@ function App() {
               <DropDown months={months} setMonth={setMonth} />
             </div>
 
-            <Table data={data} />
+            {
+              tableLoading ? (<Loader />) : (<Table data={data} />)
+            }
+            
             <div className='flex flex-row gap-2 mx-auto'>
               <Button title="Prev" onClick={prevPage} />
               <Button title="Next" onClick={nextPage} />
@@ -116,11 +137,17 @@ function App() {
 
           </div>
           <div className='w-full flex flex-col gap-4 my-12'>
-            <Stats month={month} months={months} statsData={statsData} />
+            {
+              statsLoading ? (<Loader />) : (<Stats month={month} months={months} statsData={statsData} />)
+            }
+            
           </div>
           
           <div className='w-full flex flex-col gap-4 my-12'>
-            <ChartBar month={month} months={months} barData={barchartData} />
+            {
+              barchartLoading ? (<Loader />) : (<ChartBar month={month} months={months} barData={barchartData} />)
+            }
+            
           </div>
           
           
