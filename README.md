@@ -1,4 +1,4 @@
-# Project Name
+# Roxiler coding challenge
 
 A full-stack application with a backend built using Express.js and Prisma, and a frontend developed in React.js.
 
@@ -60,7 +60,7 @@ Follow the steps below to set up the project on your local machine.
 ### **Tech Stack**
 
 - **Backend**: Node.js, Express.js, Prisma, MongoDB
-- **Frontend**: React.js, Tailwind CSS (if applicable)
+- **Frontend**: React.js, Tailwind CSS
 
 ---
 
