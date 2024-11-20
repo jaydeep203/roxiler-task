@@ -26,7 +26,9 @@ const getAllTransactions = async(query) => {
     }
 
         const data = await prisma.product.findMany({
-            where: conditions.length>0 ? { OR:conditions } : {}
+            where: conditions.length>0 ? { OR:conditions } : {},
+            skip:parseInt(skip),
+            take: 10,
         });
 
         const filteredData = data.filter((item) => {
